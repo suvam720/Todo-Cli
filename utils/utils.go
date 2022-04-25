@@ -17,8 +17,9 @@ type Postask struct {
 	Text      string             `json:"text"`
 	Completed bool               `json:"completed"`
 }
+//getting object id and store in slice
 
-func GetId() []string {
+func GetId() []primitive.ObjectID {
 	var data []Postask
 	res, err := http.Get("http://localhost:4000/api/tasks")
 	if err != nil {
@@ -31,83 +32,11 @@ func GetId() []string {
 	}
 
 	json.Unmarshal(body, &data)
-	var Id []string
+	var Id []primitive.ObjectID
 	for i := range data {
 		str := data[i]
-		Id = append(Id, str.ID.String())
+		Id = append(Id, str.ID)
 	}
 	return Id
 
 }
-
-// func Get(ctx context.Context, url string) ([]byte, error) {
-
-// 	req, err := http.NewRequest(http.MethodGet, url, nil)
-// 	if err != nil {
-// 		return []byte{}, err
-// 	}
-// 	req = req.WithContext(ctx)
-// 	resp, err := http.DefaultClient.Do(req)
-// 	if err != nil {
-// 		return []byte{}, err
-// 	}
-// 	defer resp.Body.Close()
-// 	return checkStatus(resp)
-// }
-
-// func Post(ctx context.Context, url string) ([]byte, error) {
-
-// 	req, err := http.NewRequest(http.MethodPost, url, nil)
-// 	if err != nil {
-// 		return []byte{}, err
-// 	}
-// 	req = req.WithContext(ctx)
-// 	resp, err := http.DefaultClient.Do(req)
-// 	if err != nil {
-// 		return []byte{}, err
-// 	}
-// 	defer resp.Body.Close()
-// 	return checkStatus(resp)
-// }
-
-// func Put(ctx context.Context, url string) ([]byte, error) {
-
-// 	req, err := http.NewRequest(http.MethodPut, url, nil)
-// 	if err != nil {
-// 		return []byte{}, err
-// 	}
-// 	req = req.WithContext(ctx)
-// 	resp, err := http.DefaultClient.Do(req)
-// 	if err != nil {
-// 		return []byte{}, err
-// 	}
-// 	defer resp.Body.Close()
-// 	return checkStatus(resp)
-// }
-
-// func Delete(ctx context.Context, url string) ([]byte, error) {
-
-// 	req, err := http.NewRequest(http.MethodGet, url, nil)
-// 	if err != nil {
-// 		return []byte{}, err
-// 	}
-// 	req = req.WithContext(ctx)
-// 	resp, err := http.DefaultClient.Do(req)
-// 	if err != nil {
-// 		return []byte{}, err
-// 	}
-// 	defer resp.Body.Close()
-// 	return checkStatus(resp)
-// }
-
-// func checkStatus(h *http.Response) ([]byte, error) {
-// 	if h.StatusCode == http.StatusOK {
-// 		dataByte, err := ioutil.ReadAll(h.Body)
-// 		if err != nil {
-// 			return []byte{}, err
-// 		}
-// 		return dataByte, nil
-// 	} else {
-// 		return []byte{}, errors.New(strconv.Itoa(http.StatusNotFound))
-// 	}
-// }
