@@ -17,13 +17,16 @@ var listCmd = &cobra.Command{
 	Short: "to list all todos",
 	Long:  `A longer description that spans multiple lines and likely contains examples`,
 	Run: func(cmd *cobra.Command, args []string) {
+		//calling list function
 		listTodo()
+		fmt.Println("Todo List:")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(listCmd)
 }
+//function to listing all todos
 
 func listTodo() {
 	var data []utils.Postask
@@ -39,12 +42,10 @@ func listTodo() {
 
 	json.Unmarshal(body, &data)
 	n := 1
-	var Id []string
 	for i := range data {
 		str := data[i]
 		fmt.Printf(" %d) %s   Completed: %v \n", n, str.Text, str.Completed)
 		n++
-		Id = append(Id, str.ID.String())
 	}
 
 }
