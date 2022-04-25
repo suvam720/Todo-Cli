@@ -18,11 +18,12 @@ var addCmd = &cobra.Command{
 	Short: "add task",
 	Long:  `to add tasks.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		//parsing flag value
 		str, err := cmd.Flags().GetString("t")
 		if err != nil {
 			panic("failed to add task")
 		}
-
+		//calling add function
 		addTodo(str)
 		fmt.Println("Task added")
 
@@ -34,6 +35,7 @@ func init() {
 	addCmd.PersistentFlags().String("t", "", "to add task")
 
 }
+//function to add to do by making http request
 func addTodo(str string) {
 	task := &utils.Postask{
 		ID:        primitive.NewObjectID(),
