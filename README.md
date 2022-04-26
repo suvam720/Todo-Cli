@@ -1,3 +1,7 @@
 # Todo-Cli
-### using cobra 
-### commands: add: adding task, deleteOne: delete a specific task, delete: delete all tasks, completed: update a task as completed
+### commands: 
+add: adding task 
+list: prints all tasks
+deleteOne: delete a specific task 
+delete: delete all tasks 
+completed: update a task as completed
