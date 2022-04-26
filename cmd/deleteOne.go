@@ -11,9 +11,9 @@ import (
 
 // deleteOneCmd represents the deleteOne command
 var deleteOneCmd = &cobra.Command{
-	Use:   "deleteOne",
+	Use:   "deleteOne --i= index of task ad id",
 	Short: "To delete one task",
-	Long:  `A longer description`,
+	Long:  `delete a specific task by providing its id using i flag `,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		index, err := cmd.Flags().GetInt("i")
@@ -24,7 +24,9 @@ var deleteOneCmd = &cobra.Command{
 		PobjectId := utils.ObjectID(index)
 		statusCode := delete(PobjectId)
 
-		fmt.Println(statusCode, "\n Task deleted")
+		if statusCode == 200 {
+			fmt.Println("Task deleted")
+		}
 	},
 }
 
@@ -33,7 +35,6 @@ func init() {
 	deleteOneCmd.PersistentFlags().Int("i", 0, "take index ")
 }
 
-//function to delete a task by id
 func delete(id primitive.ObjectID) int {
 
 	url := "http://localhost:4000/api/task/" + id.Hex()

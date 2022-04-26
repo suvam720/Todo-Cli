@@ -13,9 +13,12 @@ var deleteCmd = &cobra.Command{
 	Short: "To delete all tasks",
 	Long:  `A longer description`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//calling function
-		deleteAll()
-		fmt.Println("Todo deleted")
+
+		status := deleteAll()
+
+		if status == 200 {
+			fmt.Println("Task deleted")
+		}
 	},
 }
 
@@ -23,18 +26,21 @@ func init() {
 	rootCmd.AddCommand(deleteCmd)
 }
 
-//function to delete all tasks
-func deleteAll() {
+func deleteAll() int {
+
 	url := "http://localhost:4000/api/deletetasks"
+
 	client := &http.Client{}
-	// set the HTTP method, url, and request body
+
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		panic(err)
 	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(resp.StatusCode)
+
+	return resp.StatusCode
 }

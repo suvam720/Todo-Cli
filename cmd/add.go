@@ -14,41 +14,47 @@ import (
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add",
+	Use:   "add -t=text",
 	Short: "add task",
-	Long:  `to add tasks.`,
+	Long:  `add tasks followed by t flag which takes text value as a task.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//parsing flag value
-		str, err := cmd.Flags().GetString("t")
-		if err != nil {
-			panic("failed to add task")
-		}
-		//calling add function
-		addTodo(str)
-		fmt.Println("Task added")
 
+		taskString, err := cmd.Flags().GetString("t")
+		if err != nil {
+			panic("failed to get task")
+		}
+
+		status := addTodo(taskString)
+
+		if status == 200 {
+			fmt.Println("Task added")
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(addCmd)
 	addCmd.PersistentFlags().String("t", "", "to add task")
-
 }
-//function to add to do by making http request
-func addTodo(str string) {
-	task := &utils.Postask{
+
+func addTodo(str string) int {
+
+	taskBody := &utils.TaskBody{
 		ID:        primitive.NewObjectID(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		Text:      str,
 		Completed: false,
 	}
-	taskjson, _ := json.Marshal(task)
+
+	taskjson, _ := json.Marshal(taskBody)
 
 	res, err := http.Post("http://localhost:4000/api/task", "application/x-www-form-urlencode", bytes.NewReader(taskjson))
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer res.Body.Close()
+
+	return res.StatusCode
 }

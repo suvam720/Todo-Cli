@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -11,53 +9,39 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// updateCmd represents the update command
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: "update any task",
-	Long:  `A longer description`,
+// completedCmd represents the completed command
+var completedCmd = &cobra.Command{
+	Use:   "completed -i=index",
+	Short: "mark any task as complete",
+	Long:  `use the complete command to update a task followed by the i flag which takes the index of a task`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//parsing the vlaue of flag which recives index
-		Kd, err := cmd.Flags().GetInt("i")
+
+		index, err := cmd.Flags().GetInt("i")
 		if err != nil {
 			panic("failed to get id")
 		}
-		var Id primitive.ObjectID
-		iD := utils.GetId()
-		for i := range iD {
-			if Kd == i+1 {
-				Id = iD[i]
-			}
-		}
-		//calling the update function
-		update(Id)
-		fmt.Println("Task updated")
 
+		PobjectId := utils.ObjectID(index)
+		status := updateTask(PobjectId)
+
+		fmt.Printf("Status:%d \nTask Updated", status)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(updateCmd)
-	updateCmd.PersistentFlags().Int("i", 0, "give index as id")
-	updateCmd.PersistentFlags().Bool("c", false, "give index as id")
+	
+	rootCmd.AddCommand(completedCmd)
+	completedCmd.PersistentFlags().Int("i", 0, "give index as id")
 
 }
 
-//function for update a task by id
-func update(id primitive.ObjectID) {
+func updateTask(id primitive.ObjectID) int {
+
 	url := "http://localhost:4000/api/task/" + id.Hex()
-	updateData := &utils.Postask{
-		Completed: true,
-	}
 
 	client := &http.Client{}
 
-	json, err := json.Marshal(updateData)
-	if err != nil {
-		panic(err)
-	}
-
-	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(json))
+	req, err := http.NewRequest(http.MethodPut, url, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -68,8 +52,5 @@ func update(id primitive.ObjectID) {
 		panic(err)
 	}
 
-	fmt.Println(resp.StatusCode)
-}
-func getIndex() {
-
+	return resp.StatusCode
 }

@@ -15,37 +15,46 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "to list all todos",
-	Long:  `A longer description that spans multiple lines and likely contains examples`,
+	Long:  `list command gets all tha tasks and prints them`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//calling list function
-		listTodo()
-		fmt.Println("Todo List:")
+
+		listOfTasks := listTasks()
+		printData(listOfTasks)
 	},
 }
 
 func init() {
+	
 	rootCmd.AddCommand(listCmd)
 }
-//function to listing all todos
 
-func listTodo() {
-	var data []utils.Postask
+func listTasks() []utils.TaskBody {
+
+	var dataList []utils.TaskBody
+
 	res, err := http.Get("http://localhost:4000/api/tasks")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer res.Body.Close()
+
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	json.Unmarshal(body, &data)
+	json.Unmarshal(body, &dataList)
+
+	return dataList
+}
+
+func printData(dataList []utils.TaskBody) {
+	fmt.Println("Todo List:")
 	n := 1
-	for i := range data {
-		str := data[i]
+	for i := range dataList {
+		str := dataList[i]
 		fmt.Printf(" %d) %s   Completed: %v \n", n, str.Text, str.Completed)
 		n++
 	}
-
 }
