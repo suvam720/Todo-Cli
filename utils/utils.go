@@ -17,26 +17,43 @@ type Postask struct {
 	Text      string             `json:"text"`
 	Completed bool               `json:"completed"`
 }
-//getting object id and store in slice
+//getting Primitive object id and storing in slice
 
 func GetId() []primitive.ObjectID {
+
 	var data []Postask
+
 	res, err := http.Get("http://localhost:4000/api/tasks")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer res.Body.Close()
+
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	json.Unmarshal(body, &data)
+
 	var Id []primitive.ObjectID
 	for i := range data {
 		str := data[i]
 		Id = append(Id, str.ID)
 	}
-	return Id
 
+	return Id
+}
+
+func ObjectID(index int) primitive.ObjectID{
+
+	var PobjectId primitive.ObjectID
+		ObjectID := GetId()
+		for i := range ObjectID {
+			if index == i+1 {
+				PobjectId = ObjectID[i]
+			}
+		}
+
+	return PobjectId
 }

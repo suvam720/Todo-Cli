@@ -15,38 +15,35 @@ var deleteOneCmd = &cobra.Command{
 	Short: "To delete one task",
 	Long:  `A longer description`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//parsing flag value and then
-		Kd, err := cmd.Flags().GetInt("i")
+
+		index, err := cmd.Flags().GetInt("i")
 		if err != nil {
-			panic("failed to get id")
+			panic("failed to get index")
 		}
-		var StrId primitive.ObjectID
-		iD := utils.GetId()
-		for i := range iD {
-			if Kd == i+1 {
-				StrId = iD[i]
-			}
-		}
-		statusCode := delete(StrId)
+
+		PobjectId := utils.ObjectID(index)
+		statusCode := delete(PobjectId)
+
 		fmt.Println(statusCode, "\n Task deleted")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deleteOneCmd)
-	deleteOneCmd.PersistentFlags().Int("i", 0, "A help for foo")
+	deleteOneCmd.PersistentFlags().Int("i", 0, "take index ")
 }
 
 //function to delete a task by id
 func delete(id primitive.ObjectID) int {
+
 	url := "http://localhost:4000/api/task/" + id.Hex()
+
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		panic(err)
 	}
 	client := &http.Client{}
 
-	// set the request header Content-Type for json
 	req.Header.Set("Content-Type", "application/x-www-form-urlencode; charset=utf-8")
 	resp, err := client.Do(req)
 	if err != nil {
@@ -54,5 +51,4 @@ func delete(id primitive.ObjectID) int {
 	}
 
 	return resp.StatusCode
-
 }
